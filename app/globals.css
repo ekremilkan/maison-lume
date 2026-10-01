@@ -1,0 +1,456 @@
+@import "tailwindcss";
+
+@theme {
+  /* Maison Lume palette — warm neutrals with one muted clay accent */
+  --color-ivory: #f8f5ef;
+  --color-linen: #f1ebe1;
+  --color-sand: #e6dccd;
+  --color-stone: #cbbfae;
+  --color-taupe: #6b6157; /* muted text, 5.6:1 on ivory */
+  --color-charcoal: #26231f;
+  --color-clay: #94553a; /* accent, 5.1:1 on ivory */
+  --color-clay-dark: #7a4530;
+  --color-error: #a3302a;
+  --color-success: #3f5e45;
+
+  --font-serif: var(--font-cormorant), "Times New Roman", serif;
+  --font-sans: var(--font-jost), system-ui, sans-serif;
+
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-curtain: cubic-bezier(0.77, 0, 0.18, 1);
+
+  --animate-fade-up: fade-up 0.7s var(--ease-soft) both;
+  --animate-spin-slow: spin 24s linear infinite;
+  --animate-marquee: marquee 42s linear infinite;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+}
+
+/* Delay for above-the-fold entrance animations; shortened when the intro is skipped. */
+:root {
+  --intro-delay: 1.5s;
+}
+:root.no-intro {
+  --intro-delay: 0.1s;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    font-family: var(--font-sans);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Fine paper grain over everything — gives flat colour an editorial print feel. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    pointer-events: none;
+    opacity: 0.045;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 1.5px solid var(--color-charcoal);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--color-sand);
+  }
+}
+
+@layer components {
+  /* Small uppercase label used for eyebrows, nav and buttons */
+  .eyebrow {
+    font-size: 0.6875rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* Buttons: a colour panel sweeps in from the left on hover */
+  .btn {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0 1.75rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    transition:
+      color 0.5s var(--ease-soft),
+      border-color 0.5s var(--ease-soft),
+      opacity 0.3s;
+  }
+  .btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.6s var(--ease-curtain);
+  }
+  .btn:hover:not(:disabled)::before {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .btn-primary {
+    background: var(--color-charcoal);
+    color: var(--color-ivory);
+  }
+  .btn-primary::before {
+    background: var(--color-clay-dark);
+  }
+  .btn-outline {
+    border: 1px solid var(--color-charcoal);
+    color: var(--color-charcoal);
+  }
+  .btn-outline::before {
+    background: var(--color-charcoal);
+  }
+  .btn-outline:hover:not(:disabled) {
+    color: var(--color-ivory);
+  }
+
+  /* Text link with an underline that draws in on hover */
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.4s var(--ease-soft);
+  }
+  .link-underline:hover,
+  .link-underline[aria-current="page"] {
+    background-size: 100% 1px;
+  }
+
+  .field {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.75rem 0.875rem;
+    background: transparent;
+    border: 1px solid var(--color-stone);
+    font-size: 1rem; /* 16px avoids iOS zoom on focus */
+    transition: border-color 0.2s;
+  }
+  .field:hover {
+    border-color: var(--color-taupe);
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-charcoal);
+  }
+  .field[aria-invalid="true"] {
+    border-color: var(--color-error);
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* -------------------------------------------------------------------
+   * Entrance animations for the first screen (CSS only, run on load).
+   * `.line` masks a line of text; its child slides up into view.
+   * ----------------------------------------------------------------- */
+  .line {
+    display: block;
+    /* Clip vertically only, so long words can extend sideways. */
+    clip-path: inset(-0.2em -100vw -0.1em -100vw);
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+  .line > span {
+    display: block;
+    animation: line-up 1.1s var(--ease-soft) both;
+    animation-delay: calc(var(--intro-delay) + var(--d, 0ms));
+  }
+  .enter {
+    animation: fade-up-lg 1s var(--ease-soft) both;
+    animation-delay: calc(var(--intro-delay) + var(--d, 0ms));
+  }
+  .curtain {
+    animation: curtain 1.4s var(--ease-curtain) both;
+    animation-delay: calc(var(--intro-delay) + var(--d, 0ms));
+  }
+  .ken-burns {
+    animation: ken-burns 2.6s var(--ease-soft) both;
+    animation-delay: calc(var(--intro-delay) + var(--d, 0ms));
+  }
+
+  /* -------------------------------------------------------------------
+   * Scroll reveals. Hidden only when JS is running (html.js), so the
+   * content is always visible without JavaScript.
+   * ----------------------------------------------------------------- */
+  .js [data-reveal] {
+    transition:
+      opacity 1s var(--ease-soft),
+      transform 1.1s var(--ease-soft),
+      clip-path 1.3s var(--ease-curtain);
+    transition-delay: var(--d, 0ms);
+  }
+  .js [data-reveal="up"]:not(.is-in) {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  .js [data-reveal="fade"]:not(.is-in) {
+    opacity: 0;
+  }
+  /* Image "curtain": an ivory panel lifts off the image. (A clip-path would
+     hide the element from IntersectionObserver and lazy loading.) */
+  .js [data-reveal="clip"]::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: 2;
+    background: var(--color-ivory);
+    transform-origin: top;
+    transition: transform 1.3s var(--ease-curtain);
+    transition-delay: var(--d, 0ms);
+    pointer-events: none;
+  }
+  .js [data-reveal="clip"].is-in::after {
+    transform: scaleY(0);
+  }
+  .js [data-reveal="mask"] {
+    overflow: hidden;
+  }
+  .js [data-reveal="mask"] > * {
+    display: inline-block;
+    transition: transform 1.2s var(--ease-soft);
+    transition-delay: var(--d, 0ms);
+  }
+  .js [data-reveal="mask"]:not(.is-in) > * {
+    transform: translateY(105%);
+  }
+}
+
+@keyframes line-up {
+  from {
+    transform: translateY(110%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes fade-up-lg {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes curtain {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes ken-burns {
+  from {
+    transform: scale(1.18);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * Intro: a short curtain with the wordmark, shown once per session on
+ * the home page. Pure CSS so it never blocks the page.
+ * ------------------------------------------------------------------- */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: var(--color-charcoal);
+  color: var(--color-ivory);
+  pointer-events: none;
+  animation: intro-out 1s var(--ease-curtain) 1.05s both;
+}
+.intro-letter {
+  display: inline-block;
+  animation: intro-letter 0.8s var(--ease-soft) both;
+  animation-delay: calc(var(--i) * 45ms + 100ms);
+}
+.intro-line {
+  transform-origin: left;
+  animation: intro-line 0.9s var(--ease-curtain) 0.2s both;
+}
+.no-intro .intro {
+  display: none;
+}
+@keyframes intro-letter {
+  from {
+    opacity: 0;
+    transform: translateY(0.6em);
+    filter: blur(6px);
+  }
+}
+@keyframes intro-line {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes intro-out {
+  to {
+    clip-path: inset(0 0 100% 0);
+    visibility: hidden;
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * Page transitions (React <ViewTransition>)
+ * ------------------------------------------------------------------- */
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+::view-transition-old(.page) {
+  animation: vt-fade-out 220ms ease-in both;
+}
+::view-transition-new(.page) {
+  animation: vt-page-in 600ms var(--ease-soft) 120ms both;
+}
+::view-transition-group(.morph) {
+  animation-duration: 650ms;
+  animation-timing-function: var(--ease-curtain);
+  z-index: 50;
+}
+::view-transition-image-pair(.morph) {
+  animation-name: vt-blur;
+}
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 60;
+}
+::view-transition-old(site-header) {
+  display: none;
+}
+::view-transition-new(site-header) {
+  animation: none;
+}
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+@keyframes vt-blur {
+  40% {
+    filter: blur(2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+  .intro {
+    display: none;
+  }
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+/* Keep focus rings visible on dark surfaces */
+.bg-charcoal :focus-visible {
+  outline-color: var(--color-ivory);
+}
+
+@keyframes scroll-line {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(200%);
+  }
+}
+
+.js [data-word] {
+  opacity: 0.14;
+}
+
+/* Children fade up one after another (product info, page headers). */
+.stagger > * {
+  animation: fade-up-lg 0.9s var(--ease-soft) both;
+  animation-delay: calc(var(--intro-delay) + var(--stagger-step, 60ms) * var(--n, 0));
+}
+.stagger > :nth-child(1) { --n: 0; }
+.stagger > :nth-child(2) { --n: 1; }
+.stagger > :nth-child(3) { --n: 2; }
+.stagger > :nth-child(4) { --n: 3; }
+.stagger > :nth-child(5) { --n: 4; }
+.stagger > :nth-child(6) { --n: 5; }
+.stagger > :nth-child(7) { --n: 6; }
+.stagger > :nth-child(8) { --n: 7; }
+.stagger > :nth-child(n + 9) { --n: 8; }
