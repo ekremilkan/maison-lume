@@ -49,7 +49,7 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
       price: (product.price / 100).toFixed(2),
       priceCurrency: "EUR",
       availability: "https://schema.org/InStock",
-      url: `${SITE.url}/product/${product.slug}`,
+      url: `${SITE.url}/product/${product.slug}${SITE.trailingSlash ? "/" : ""}`,
     },
   };
 

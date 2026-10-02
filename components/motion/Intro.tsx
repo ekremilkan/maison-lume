@@ -22,4 +22,5 @@ export function Intro() {
  * Runs before first paint: marks JS as available (enables scroll reveals) and
  * decides whether to play the intro — only on the home page, once per session.
  */
-export const BOOT_SCRIPT = `(function(){var d=document.documentElement;d.classList.add('js');try{if(location.pathname!=='/'||sessionStorage.getItem('ml-intro')){d.classList.add('no-intro')}else{sessionStorage.setItem('ml-intro','1')}}catch(e){d.classList.add('no-intro')}})();`;
+const HOME = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/`;
+export const BOOT_SCRIPT = `(function(){var d=document.documentElement;d.classList.add('js');try{var p=location.pathname;if(p.charAt(p.length-1)!=='/')p+='/';if(p!==${JSON.stringify(HOME)}||sessionStorage.getItem('ml-intro')){d.classList.add('no-intro')}else{sessionStorage.setItem('ml-intro','1')}}catch(e){d.classList.add('no-intro')}})();`;

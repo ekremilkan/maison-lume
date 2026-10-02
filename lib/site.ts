@@ -4,6 +4,8 @@ export const SITE = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   /** Set NEXT_PUBLIC_ALLOW_INDEXING=true to let search engines index the demo. */
   allowIndexing: process.env.NEXT_PUBLIC_ALLOW_INDEXING === "true",
+  /** Static export (GitHub Pages) serves pages as /path/ — match it in absolute URLs. */
+  trailingSlash: process.env.GITHUB_PAGES === "true",
   studioName: "[My Studio]",
   studioUrl: "#",
   email: "hello@maisonlume.example",

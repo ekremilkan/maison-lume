@@ -26,6 +26,26 @@ npm start
 Checkout test card: `4242 4242 4242 4242`, any future expiry, any CVC.
 `4000 0000 0000 0002` simulates a declined payment.
 
+## Deploying to GitHub Pages
+
+Every push to `main` runs `.github/workflows/deploy.yml`, which builds a static
+export and publishes it to **https://ekremilkan.github.io/maison-lume/**.
+
+- One-time setup: repository **Settings → Pages → Source: GitHub Actions**.
+- The Pages build sets `GITHUB_PAGES=true` (static export to `out/`, trailing
+  slashes), `NEXT_PUBLIC_BASE_PATH` (the repo sub-path) and `NEXT_PUBLIC_SITE_URL`.
+  Local `npm run dev` / `npm start` are unaffected and still run at `/`.
+- Images use a custom `next/image` loader (`lib/image-loader.ts`) that lets
+  Unsplash's CDN do the resizing, since static hosting has no image server.
+
+To preview the Pages build locally:
+
+```bash
+GITHUB_PAGES=true NEXT_PUBLIC_BASE_PATH=/maison-lume npm run build
+mkdir -p /tmp/site && ln -sfn "$PWD/out" /tmp/site/maison-lume
+python3 -m http.server 8080 -d /tmp/site   # → http://localhost:8080/maison-lume/
+```
+
 ## Configuration
 
 | What | Where |
